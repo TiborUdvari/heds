@@ -1,0 +1,26 @@
+/* On-screen keyboard — functional defaults only; restyle freely.
+   The keyboard is toggled via the `hidden` attribute, so each `display` rule is
+   scoped with :not([hidden]) (a bare `display` would otherwise beat [hidden]). */
+.keyboard:not([hidden]) {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 1000; /* float above overlays/modals */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background: white;
+  border-top: 1px solid black;
+}
+
+/* Numbers: a tidy 3-column grid (0–9 + ⌫). */
+.keyboard--numbers:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 12rem;
+}
+
+.keyboard .key {
+  min-width: 2rem;
+}

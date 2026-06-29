@@ -1,0 +1,6 @@
+/* Base / global element styles. */
+@import "https://necolas.github.io/normalize.css/8.0.1/normalize.css";
+
+body {
+  font-family: sans-serif;
+}

@@ -1,0 +1,91 @@
+/* Shell layout: the iPad frame, the top/bottom UI bars, and the game grid. */
+
+:root {
+  --grid-cols: 10;
+  --grid-rows: 6;
+  --frame-w: 1366px; /* iPad frame size — the grid is sized to fit inside this */
+  --frame-h: 1024px;
+
+  /* Square cell size, derived from the frame width. Exposed so it can be reused
+     anywhere (e.g. height: calc(var(--cell) * 2), gaps, offsets). */
+  --cell: calc(var(--frame-w) / var(--grid-cols)); /* 1366 / 10 = 136.6px */
+
+  /* Palette — the first thing to change when re-theming. */
+  --accent: #f60; /* primary accent (orange) */
+  --ok: #9eff3d; /* validated / success (green) */
+  --pending: #d6f5b0; /* not-yet-validated (pale green) */
+}
+
+/* Dark backdrop behind the frame (simulates the device). */
+body {
+  background-color: black;
+}
+
+/* The socle: top UI / grid / bottom UI stacked in a flex column. */
+.container {
+  display: flex;
+  flex-direction: column;
+  width: var(--frame-w);
+  height: var(--frame-h);
+  background-color: white;
+}
+
+/* Top UI bar (mission name + back; mission-specific UI can go here later). */
+.top-ui {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid black;
+}
+
+/* Bottom UI bar (placeholder — mission-specific UI can go here later). */
+.bottom-ui {
+  padding: 0.5rem 1rem;
+  border-top: 1px solid black;
+}
+
+/* The grid fills the frame width; content overflowing a cell is clipped. */
+#slot {
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Game grid: 10 × 6 of SQUARE cells, each --cell wide/tall, sized to fit the
+   iPad frame. Explicit --cell tracks (rather than 1fr) keep the cell size a
+   single reusable value. Grid box = 10×--cell wide, 6×--cell tall (1366 × 820). */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), var(--cell));
+  grid-template-rows: repeat(var(--grid-rows), var(--cell));
+}
+
+/* Place a child into a rectangular area by 1-based, INCLUSIVE cell numbers:
+   <div class="area" style="--col-start:2; --col-end:5; --row-start:1; --row-end:3">
+   --col-end / --row-end may be omitted to occupy a single cell. */
+.area {
+  grid-column: var(--col-start) / calc(var(--col-end, var(--col-start)) + 1);
+  grid-row: var(--row-start) / calc(var(--row-end, var(--row-start)) + 1);
+}
+
+/* Make a wrapper transparent to layout: its children become items of the parent
+   grid. Lets a <form> span several .area cells without breaking placement — so the
+   keyboard's Enter key (which submits the field's form) acts as a "return". */
+.contents {
+  display: contents;
+}
+
+/* Debug grid overlay: outline every cell (kept on by default on #slot). The
+   gradient step reuses --cell, so it always matches the real cell size. */
+.grid--debug {
+  background-image: repeating-linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.15) 0 1px,
+      transparent 1px var(--cell)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.15) 0 1px,
+      transparent 1px var(--cell)
+    );
+}

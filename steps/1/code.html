@@ -1,0 +1,40 @@
+<div class="area code__header" style="--col-start: 3; --col-end: 6; --row-start: 2">
+  Ouverture du labo
+</div>
+
+<div class="area code__q" style="--col-start: 3; --col-end: 6; --row-start: 3">
+  D’après le podcast No.7 « Smarter medicine », en quelle année la société
+  suisse de médecine générale a lancé la campagne « Smarter medicine –
+  choosing wisely Switzerland » ?
+</div>
+
+<!-- The form (display:contents, so it doesn't disturb the grid) lets the
+     keyboard's Enter key validate the code, just like clicking Valider. -->
+<form class="contents" id="code-form">
+  <div class="area slots" id="code-slots" style="--col-start: 3; --col-end: 6; --row-start: 4">
+    <span class="slot">X</span>
+    <span class="slot">X</span>
+    <span class="slot">X</span>
+    <span class="slot">X</span>
+    <input id="code-input" class="slots__input" inputmode="none" data-keyboard="numbers" maxlength="4">
+  </div>
+
+  <div class="area code__aide" style="--col-start: 3; --col-end: 4; --row-start: 5"
+       onclick="openAide('Indice : la réponse est une année autour de 2014.')">Aide</div>
+  <button class="area code__valider" type="submit" style="--col-start: 5; --col-end: 6; --row-start: 5">Valider</button>
+</form>
+
+<div class="area" id="code-msg" style="--col-start: 3; --col-end: 6; --row-start: 6"></div>
+
+<script>
+  (() => {
+    const ANSWER = "2014";
+    const input = document.getElementById("code-input");
+    wireCode(document.getElementById("code-slots"), input);
+    // Fires on Valider click AND on the keyboard's Enter (form.requestSubmit()).
+    document.getElementById("code-form").addEventListener("submit", () => {
+      if (input.value === ANSWER) location.hash = "#3";
+      else document.getElementById("code-msg").textContent = "Code incorrect";
+    });
+  })();
+</script>

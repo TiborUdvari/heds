@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>My test page</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <script type="module" src="js/app.js"></script>
+  </head>
+  <body>
+    <!-- The socle: top UI / grid UI / bottom UI stacked in a flex column. -->
+    <div class="container">
+      <header class="top-ui">
+        <button id="back" hidden>Back</button>
+        <span id="mission-name"></span>
+      </header>
+      <!-- grid--debug outlines the cells (always-on debug view of the grid). -->
+      <div id="slot" class="grid grid--debug"></div>
+      <footer class="bottom-ui">bottom ui (placeholder)</footer>
+    </div>
+
+    <!-- Shared "Aide" overlay, opened by screens via openAide(...) -->
+    <div id="aide" class="overlay" hidden>
+      <div class="overlay__panel">
+        <button class="overlay__close" id="aide-close" type="button">×</button>
+        <div class="overlay__title">Aide</div>
+        <div id="aide-body"></div>
+      </div>
+    </div>
+
+    <div id="keyboard" class="keyboard" hidden></div>
+  </body>
+</html>

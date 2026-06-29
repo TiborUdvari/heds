@@ -1,0 +1,40 @@
+<div data-mission="EXEMPLE · TEXTE LIBRE" hidden></div>
+
+<!-- Free-text answer, tolerant of typos and accents. fuzzyMatch() (js/fuzzy.js)
+     normalizes accents/case/punctuation and allows a small edit distance. -->
+<div class="area area--text" style="--col-start: 2; --col-end: 9; --row-start: 2">
+  Texte libre (tolérant aux fautes et aux accents) : quelle science étudie les
+  liens entre les êtres vivants et leur milieu ?
+</div>
+
+<!-- Wrapping the field + submit button in a <form class="contents"> means the
+     keyboard's Enter key submits it too (same as clicking Valider). -->
+<form class="contents" id="free-form">
+  <div class="area" style="--col-start: 3; --col-end: 6; --row-start: 4">
+    <label>
+      Réponse :
+      <input id="free-input" class="field" inputmode="none" data-keyboard="letters" placeholder="…">
+    </label>
+  </div>
+
+  <button class="area btn btn--ok" type="submit" style="--col-start: 7; --row-start: 4">Valider</button>
+
+  <div class="area" id="free-msg" style="--col-start: 3; --col-end: 7; --row-start: 5"></div>
+</form>
+
+<a class="area btn" style="--col-start: 9; --row-start: 5" href="#debug">Retour</a>
+
+<script>
+  (() => {
+    // Any of these spellings is accepted; fuzzyMatch() handles accents + typos.
+    const ANSWERS = ["écologie", "l'écologie"];
+    const input = document.getElementById("free-input");
+    const msg = document.getElementById("free-msg");
+    // Fires on Valider click AND on the keyboard's Enter (form.requestSubmit()).
+    document.getElementById("free-form").addEventListener("submit", () => {
+      msg.textContent = fuzzyMatch(input.value, ANSWERS)
+        ? "✓ Correct !"
+        : "✗ Essayez encore";
+    });
+  })();
+</script>

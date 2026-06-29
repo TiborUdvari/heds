@@ -1,0 +1,18 @@
+<div data-mission="EXEMPLE · VIDÉO" hidden></div>
+
+<!-- The video is placed with the same grid mechanism as everything else: an .area
+     cell rectangle, with the <video> filling it (.media). Transparent regions let
+     the grid show through. Safari/iPad plays the HEVC .mov; others play the .webm. -->
+<div class="area area--text" style="--col-start: 2; --col-end: 9; --row-start: 1">
+  Vidéo transparente, placée sur la grille (autoplay + loop).
+</div>
+
+<div class="area" style="--col-start: 4; --col-end: 7; --row-start: 2; --row-end: 5">
+  <video class="media" autoplay muted loop playsinline>
+    <source src="assets/sample-transparent.mov" type="video/quicktime; codecs=hvc1" />
+    <source src="assets/sample-transparent.webm" type="video/webm; codecs=vp9" />
+    Votre navigateur ne supporte pas la vidéo.
+  </video>
+</div>
+
+<a class="area btn" style="--col-start: 9; --row-start: 6" href="#debug">Retour</a>

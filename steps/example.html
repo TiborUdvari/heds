@@ -1,0 +1,16 @@
+<!-- Content always lives ON the grid: place each piece in cells with .area
+     (--col-start/--col-end, --row-start/--row-end are inclusive cell numbers). -->
+<div class="area area--text" style="--col-start: 3; --col-end: 8; --row-start: 2; --row-end: 3">
+  Le contenu est toujours placé sur la grille (.area).
+</div>
+
+<div class="area area--text" style="--col-start: 3; --col-end: 6; --row-start: 4">
+  Les éléments « nouveaux » flottent par-dessus (overlay).
+</div>
+
+<!-- A single floating overlay: a closeable hint (the shared openAide overlay,
+     dismissed with × or by clicking outside). -->
+<button class="area btn" style="--col-start: 7; --row-start: 4"
+        onclick="openAide('Ceci est un indice. Fermez-le avec × ou en cliquant en dehors.')">
+  Indice
+</button>

@@ -1,0 +1,188 @@
+<div data-mission="MISSION 3 · POLLUTION" hidden></div>
+
+<!-- Mission-3-specific chrome lives with the mission, so the shared stylesheet
+     stays minimal. It reuses the shared .slots/.slot/.btn/.overlay patterns. -->
+<style>
+  .sub {
+    position: relative;
+    background: var(--pending);
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  .sub--done {
+    background: var(--ok);
+  }
+  .sub--done::after {
+    content: "✓";
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    font-size: 1rem;
+  }
+  .central {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .codefinal {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    box-sizing: border-box;
+  }
+  .codefinal[hidden] {
+    display: none;
+  }
+  .codefinal__header {
+    background: var(--ok);
+    text-align: center;
+    padding: 0.5rem;
+  }
+  .codefinal__q {
+    padding: 0.5rem;
+  }
+  .codefinal__slots {
+    position: relative;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+  .codefinal__actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  .codefinal__msg {
+    text-align: center;
+    min-height: 1.2em;
+    padding: 0 0.5rem 0.5rem;
+  }
+</style>
+
+<!-- Sub-missions (one each side) -->
+<button class="area sub" data-sub="1" style="--col-start: 1; --row-start: 3; --row-end: 4">1</button>
+<button class="area sub" data-sub="2" style="--col-start: 10; --row-start: 3; --row-end: 4">2</button>
+
+<!-- Centre: locked until all sub-missions are validated, then the final code -->
+<div class="area central" style="--col-start: 4; --col-end: 7; --row-start: 2; --row-end: 5">
+  <div id="central-lock">
+    <p>Validez les sous-missions pour débloquer le code final.</p>
+    <p><strong id="central-count"></strong></p>
+  </div>
+
+  <div class="codefinal" id="codefinal" hidden>
+    <div class="codefinal__header">Code Final</div>
+    <div class="codefinal__q">
+      Bien joué, Agents ! Tous les polluants sont repérés. Entrez vite le code
+      pour les éliminer avant qu’ils ne s’échappent du labo.
+    </div>
+    <div class="codefinal__slots slots" id="final-slots">
+      <span class="slot">X</span><span class="slot">X</span><span class="slot">X</span><span class="slot">X</span>
+      <span class="slot">X</span><span class="slot">X</span><span class="slot">X</span><span class="slot">X</span>
+      <input id="final-input" class="slots__input" inputmode="none" data-keyboard="numbers" maxlength="8">
+    </div>
+    <div class="codefinal__actions">
+      <button class="btn" type="button" onclick="openAide('Indice : le code final est 42424242.')">Aide</button>
+      <button class="btn btn--ok" id="final-valider" type="button">Valider</button>
+    </div>
+    <div class="codefinal__msg" id="final-msg"></div>
+  </div>
+</div>
+
+<!-- Sub-mission overlay (an ad-hoc modal reusing the shared .overlay pattern) -->
+<div class="overlay" id="sub-overlay" hidden>
+  <div class="overlay__panel">
+    <button class="overlay__close" id="sub-close" type="button">×</button>
+    <div class="overlay__title" id="sub-title">Sous-mission</div>
+    <div>Entrez le code à 4 chiffres pour stabiliser cette zone.</div>
+    <div class="slots" id="sub-slots">
+      <span class="slot">X</span><span class="slot">X</span><span class="slot">X</span><span class="slot">X</span>
+      <input id="sub-input" class="slots__input" inputmode="none" data-keyboard="numbers" maxlength="4">
+    </div>
+    <div class="overlay__actions">
+      <button class="btn" type="button" onclick="openAide('Indice : le code est 4242.')">Aide</button>
+      <button class="btn btn--ok" id="sub-valider" type="button">Valider</button>
+    </div>
+    <div class="overlay__msg" id="sub-msg"></div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const SUB_ANSWER = "4242";
+    const FINAL_ANSWER = "42424242";
+    const validated = new Set();
+    const $ = (id) => document.getElementById(id);
+
+    const subs = [...document.querySelectorAll(".sub")];
+    const overlay = $("sub-overlay");
+    const sInput = $("sub-input");
+    const renderSub = wireCode($("sub-slots"), sInput);
+    let current = null;
+
+    // Counter is driven by the number of .sub buttons, so adding/removing
+    // sub-missions needs no other change.
+    const updateCount = () =>
+      ($("central-count").textContent = validated.size + " / " + subs.length + " validées");
+    updateCount();
+
+    const open = (n) => {
+      current = n;
+      $("sub-title").textContent = "Sous-mission " + n;
+      sInput.value = "";
+      renderSub();
+      $("sub-msg").textContent = "";
+      overlay.hidden = false;
+      sInput.focus();
+    };
+    const close = () => {
+      overlay.hidden = true;
+      sInput.blur();
+    };
+
+    subs.forEach((b) =>
+      b.addEventListener("click", () => {
+        if (!b.classList.contains("sub--done")) open(b.dataset.sub);
+      })
+    );
+    $("sub-close").addEventListener("click", close);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close();
+    });
+
+    // Validate a sub-mission: correct code marks it done (state kept on this screen).
+    $("sub-valider").addEventListener("click", () => {
+      if (sInput.value === SUB_ANSWER) {
+        validated.add(current);
+        document.querySelector('.sub[data-sub="' + current + '"]').classList.add("sub--done");
+        updateCount();
+        close();
+        if (validated.size === subs.length) {
+          $("central-lock").hidden = true;
+          $("codefinal").hidden = false;
+        }
+      } else {
+        $("sub-msg").textContent = "Code incorrect";
+      }
+    });
+
+    // Final code: validate -> back to the index.
+    const fInput = $("final-input");
+    wireCode($("final-slots"), fInput);
+    $("final-valider").addEventListener("click", () => {
+      if (fInput.value === FINAL_ANSWER) location.hash = "#debug";
+      else $("final-msg").textContent = "Code incorrect";
+    });
+  })();
+</script>

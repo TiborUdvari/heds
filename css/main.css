@@ -1,0 +1,7 @@
+/* Main stylesheet — the single file the page links.
+   It only imports the smaller partials; add new ones below.
+   Note: @import rules must come before any other rules in the file. */
+@import "base.css";
+@import "layout.css";
+@import "steps.css";
+@import "keyboard.css";
